@@ -483,7 +483,11 @@ def main() -> None:
     app = create_app(args.checkpoint_path)
 
     if args.debug:
-        app.run(host=args.host, port=args.port, debug=True)
+        # Run in development mode on localhost only to avoid exposing the
+        # Werkzeug debugger on a public interface.
+        app.config["ENV"] = "development"
+        app.config["DEBUG"] = True
+        app.run(host="127.0.0.1", port=args.port)
     else:
         try:
             import uvicorn
